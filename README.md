@@ -20,6 +20,9 @@ A ruby script tool for backing up and restoring MySQL data.
 * run? - Default (false), you can check in advance which command will be executed, if true, it will be executed
 * gzip? - default (true), whether to compress with gzip or not
 
+* DUMP_OPTIONS - you can set common mysqldump command options by this Environment variable,
+  if not set, it will use default options for mysqldump. (--single-transaction --skip-lock-tables)
+
 After execution, a directory named "backup-{backup id}" will be created under the current directory.
 
 ## restore backup data

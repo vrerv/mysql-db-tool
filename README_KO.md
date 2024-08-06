@@ -20,6 +20,9 @@ MySQL 데이터 백업 및 복구를 위한 Ruby 스크립트 도구
 * run? - 기본(false), 실제 구동될 명령을 미리 확인 할 수 있음, true 이면 실제 실행됨
 * gzip? - 기본(true), gzip 으로 압축할지 여부
 
+* DUMP_OPTIONS - 환경 변수로 공통 mysqldump 명령 옵션을 설정할 수 있음,
+  해당 환경 변수가 없다면, 기본 공통 옵션이 사용됨 (--single-transaction --skip-lock-tables)
+
 실행 완료후 현재 디렉토리 안에 backup-{backup id} 로 디렉토리가 생성된다.
 
 ## 백업 데이터 복구

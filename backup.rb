@@ -24,7 +24,7 @@ backupDir=backupDirName(id)
 run(isRun, "mkdir #{backupDir}")
 backupFile="#{backupDir}/" + DateTime.now.strftime("%Y-%m-%d") + "_#{id}"
 whereDate=(Date.today - limitDays).strftime("%Y-%m-%d 00:00:00")
-options="--single-transaction --skip-lock-tables"
+options=ENV['DUMP_OPTIONS'] || "--single-transaction --skip-lock-tables"
 
 puts "backupFile=#{backupFile}"
 
