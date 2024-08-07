@@ -4,16 +4,17 @@ def run(isRun, command)
   if not isRun
     puts "[dryRun] #{command}"
   else
+    puts command
     puts `#{command}`
   end
 end
 
-def backupDirName(id)
-  "backup-#{id}"
+def backupDirName(id, dbName = "")
+  "backup-#{id}#{dbName.empty? ? '' : "/#{dbName}"}"
 end
 
-def mysqlDefaultOptions()
-  " --ssl-mode=disabled -h #{DB_INFO[:hostname]} -u #{DB_INFO[:user]} #{DB_INFO[:password].to_s.empty? ? '' : " -p'#{DB_INFO[:password]}'"} #{DB_INFO[:database]} "
+def mysqlDefaultOptions(database)
+  " --ssl-mode=disabled -h #{DB_INFO[:hostname]} -u #{DB_INFO[:user]} #{DB_INFO[:password].to_s.empty? ? '' : " -p'#{DB_INFO[:password]}'"} #{database} "
 end
 
 def verify_tools_exist

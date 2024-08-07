@@ -18,49 +18,54 @@ limitDays=3
 
 puts "ARGV=#{ARGV}, env=#{env}, id=#{id}, run=#{isRun}"
 
-defaultOptions="--column-statistics=0 #{mysqlDefaultOptions()}"
-backupDir=backupDirName(id)
 
-run(isRun, "mkdir #{backupDir}")
-backupFile="#{backupDir}/" + DateTime.now.strftime("%Y-%m-%d") + "_#{id}"
-whereDate=(Date.today - limitDays).strftime("%Y-%m-%d 00:00:00")
-options=ENV['DUMP_OPTIONS'] || "--single-transaction --skip-lock-tables"
+Array(DB_INFO[:database]).each_with_index do |database, index |
 
-puts "backupFile=#{backupFile}"
+  defaultOptions="--column-statistics=0 #{mysqlDefaultOptions(database)}"
+  backupDir=backupDirName(id, "#{index}_#{database}")
 
-ignoreTablesOption = IGNORE_TABLES.map { |e| "--ignore-table=#{DB_INFO[:database]}.#{e}"  }.join(' ')
+  run(isRun, "mkdir -p #{backupDir}")
 
-commands = [
-  {:command => "mysqldump --no-data #{ignoreTablesOption} #{defaultOptions}", :file => "#{backupFile}-schema.sql"}
-]
+  backupFile="#{backupDir}/" + DateTime.now.strftime("%Y-%m-%d") + "_#{id}"
+  whereDate=(Date.today - limitDays).strftime("%Y-%m-%d 00:00:00")
+  options=ENV['DUMP_OPTIONS'] || "--single-transaction --skip-lock-tables"
 
-backupTables = []
+  puts "backupFile=#{backupFile}"
 
-DATA_TABLES.each {|table|
-  where = table[:where].empty? ? "" : "--where=\"#{table[:where]} >= '#{whereDate}'\""
-  if where.empty?
-    backupTables.push(table[:name])
-    next
-  else
-    commands.push({
-      :command => "mysqldump --no-create-info #{options} #{where} #{defaultOptions} #{table[:name]}",
-      :file => "#{backupFile}-#{table[:name]}.sql"
-    })
-  end
-}
+  ignoreTablesOption = IGNORE_TABLES.map { |e| "--ignore-table=#{DB_INFO[:database]}.#{e}"  }.join(' ')
 
-commands.push({
-  :command => "mysqldump --no-create-info #{options} #{defaultOptions} #{backupTables.join(' ')}",
-  :file => "#{backupFile}-all-other-tables.sql"
-})
+  commands = [
+    {:command => "mysqldump --no-data #{ignoreTablesOption} #{defaultOptions}", :file => "#{backupFile}-schema.sql"}
+  ]
 
-commands.each { |command|
-  file = isGzip ? "#{command[:file]}.gz" : command[:file]
-  #puts "file=#{file}"
-  if File.exist? file
-    puts "[skip - file exists] #{command[:command]}"
-    next
-  end
+  backupTables = []
 
-  run(isRun, "#{command[:command]} | pv #{isGzip ? '| gzip ' : ''} > #{file}")
-}
+  DATA_TABLES.each {|table|
+    where = table[:where].empty? ? "" : "--where=\"#{table[:where]} >= '#{whereDate}'\""
+    if where.empty?
+      backupTables.push(table[:name])
+      next
+    else
+      commands.push({
+                      :command => "mysqldump --no-create-info #{options} #{where} #{defaultOptions} #{table[:name]}",
+                      :file => "#{backupFile}-#{table[:name]}.sql"
+                    })
+    end
+  }
+
+  commands.push({
+                  :command => "mysqldump --no-create-info #{options} #{defaultOptions} #{backupTables.join(' ')}",
+                  :file => "#{backupFile}-all-other-tables.sql"
+                })
+
+  commands.each { |command|
+    file = isGzip ? "#{command[:file]}.gz" : command[:file]
+    #puts "file=#{file}"
+    if File.exist? file
+      puts "[skip - file exists] #{command[:command]}"
+      next
+    end
+
+    run(isRun, "#{command[:command]} | pv #{isGzip ? '| gzip ' : ''} > #{file}")
+  }
+end

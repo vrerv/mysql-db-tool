@@ -57,4 +57,3 @@ ruby -v
 * [ ] db 설정 정보는 spring cloud config 에서 가져 오는 옵션 추가
 * [ ] 자동화된 unit test 작성 필요
 * [ ] 인수 입력시 linux 표준 명령행 인수 입력 형식 --backup-id=1 형태로 변경
-* [ ] 멀티 데이터 베이스 지원

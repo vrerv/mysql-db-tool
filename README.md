@@ -57,4 +57,3 @@ ruby -v
 * [ ] Add option to get db configuration information from spring cloud config
 * [ ] Need to write automated unit tests
 * [ ] Change linux standard command line argument input format to --backup-id=1 when inputting arguments
-* [ ] Support for multiple databases
