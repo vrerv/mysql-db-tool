@@ -33,6 +33,14 @@ After execution, a directory named "backup-{backup id}" will be created under th
 
 * drop all tables? - Default (false), to keep existing tables, or true, which may cause integration check error if not set to true
 
+## Generate creating db and user sql
+
+You can generate a sql script to create a db and user.
+
+```shell
+./generate_create_db_user_sql.rb {user} {password} {db} {host}
+```
+
 ## config
 
 * config/ directory contains the configuration files.

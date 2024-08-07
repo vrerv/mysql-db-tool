@@ -40,6 +40,14 @@ MySQL 데이터 백업 및 복구를 위한 Ruby 스크립트 도구
 * ignore-tables.rb - 사용하지 않는 테이블로 백업에서 제외해야 할 테이블 설정 할 수 있다.
 * db-info-{profile}.rb - {profile} 별 db 접속 정보를 설정할 수 있다.
 
+## 사용자와 데이터베이스 생성 sql 생성
+
+데이터베이스와 사용자를 생성하는 sql 문을 생성할 수 있다.
+
+```shell
+./generate_create_db_user_sql.rb {user} {password} {db} {host}
+```
+
 ## Installing Ruby
 
 Install using `rbenv` on Mac OS X
