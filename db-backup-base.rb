@@ -14,7 +14,7 @@ def backupDirName(id, dbName = "")
 end
 
 def mysqlDefaultOptions(database)
-  " --ssl-mode=disabled -h #{DB_INFO[:hostname]} -u #{DB_INFO[:user]} #{DB_INFO[:password].to_s.empty? ? '' : " -p'#{DB_INFO[:password]}'"} #{database} "
+  " --ssl-mode=disabled -h #{DB_INFO[:hostname]} -u #{DB_INFO[:user]} #{DB_INFO[:password].to_s.empty? ? '' : " -p'#{DB_INFO[:password]}'"} #{DB_INFO[:port].to_s.empty? ? '' : " -P'#{DB_INFO[:port]}'"} #{database} "
 end
 
 def verify_tools_exist
