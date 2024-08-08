@@ -35,14 +35,17 @@ puts "backupDir=#{backupDir}"
 databases = Array(DB_INFO[:database])
 
 databaseMap = {}
+sameDb = true
 
 Dir.entries(backupDir).reject {|f| File.directory? f}.sort.each do |f|
 
   index, origin_database = split_integer_and_string(f)
   database = get_element_or_last(databases, index)
+  sameDb = sameDb && (database == origin_database)
   databaseMap["`#{origin_database}`\\."] = "`#{database}`."
 end
-gsubstring = databaseMap.map { |k,v| ".gsub(/#{k}/, \"#{v}\")" }.join("")
+
+gsubstring = sameDb ? "" : databaseMap.map { |k,v| ".gsub(/#{k}/, \"#{v}\")" }.join("")
 
 Dir.entries(backupDir).reject {|f| File.directory? f}.sort.each do |f|
 
@@ -57,10 +60,11 @@ Dir.entries(backupDir).reject {|f| File.directory? f}.sort.each do |f|
 
   def restoreEach(file, defaultOptions, gsubstring)
     command = ""
+    replacing = " | ruby -pe '$_=$_#{gsubstring}'" unless gsubstring.empty?
     if file.end_with? ".sql.gz"
-      command = "zcat #{file} | ruby -pe '$_=$_#{gsubstring}' | mysql #{defaultOptions}"
+      command = "zcat #{file} #{replacing} | mysql #{defaultOptions}"
     elsif file.end_with? ".sql"
-      command = "cat #{file} | ruby -pe '$_=$_#{gsubstring}' | mysql #{defaultOptions}"
+      command = "cat #{file} #{replacing} | mysql #{defaultOptions}"
     else
       puts "not supported file #{file}"
     end
