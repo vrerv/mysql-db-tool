@@ -2,3 +2,58 @@ backup-*
 .idea
 .DS_Store
 
+*.gem
+
+# Ignore bundler config
+/.bundle
+
+# Ignore the gems folder created by Bundler.
+/vendor/bundle
+
+# Ignore cached class files
+*.class
+
+# Ignore the logs
+/log/*
+!.keep
+
+# Ignore temporary files and folders
+/tmp/*
+/temp/*
+/node_modules
+
+# Ignore pid files, used by some servers
+*.pid
+
+# Ignore Byebug command history file
+.byebug_history
+
+# Ignore the database
+/db/*.sqlite3
+/db/*.sqlite3-journal
+
+# Ignore specific IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Ignore Ruby-specific files
+*.rbc
+.ruby-version
+.ruby-gemset
+
+# Ignore coverage results
+/coverage/
+resultset.json
+
+# Ignore rdoc files
+/rdoc/
+/.yardoc/
+/_yardoc/
+/doc/
+
+# Ignore environment-specific files
+.env
+.env.*
+.venv

@@ -7,15 +7,39 @@ MySQL 데이터 백업 및 복구를 위한 Ruby 스크립트 도구
 ## 요구사항
 
 * linux, Mac OS X 환경에서만 테스트 됨
-* ruby, mysql, mysqldump, pv, gzip, zcat 명령이 설치되어 있어야 한다
+* ruby, mysql, mysqldump, gzip, zcat 명령이 설치되어 있어야 한다
+
+## 설정
+
+데이터베이스 환경에 따라 config-<env>.json 파일을 현재 디렉토링 아래와 같이 만든다.
+
+```json
+{
+  "dataTables": [],
+  "ignoreTables": [],
+  "dbInfo": {
+    "host": "localhost",
+    "port": 3306,
+    "user": "root",
+    "password": "",
+    "database": [
+      "test_db"
+    ]
+  }
+}
+```
+
+* dataTables - 큰 테이블 중 최신(3일) row 만 백업하기 위해 --where 조건을 넣기 위한 컬럼을 설정할 수 있다.
+    * { "name": "table_name", "where": "column_name" }
+* ignoreTables - 제외할 테이블을 설정한다.
 
 ## 데이터 백업
 
 ```shell
-./backup.rb {profile} {backup id} {run?} {gzip?}
+./bin/backup {env} {backup id} {run?} {gzip?}
 ```
 
-* profile - 기본(dev), config 안에 db-info-<profile> 로 맵핑, DB 접속 정보가 있음
+* env - 기본(dev), 설정 파일을 찾기위한 키, DB 접속 정보가 있음
 * backup id - 기본(0), 문자열로 복구할때 사용할 id
 * run? - 기본(false), 실제 구동될 명령을 미리 확인 할 수 있음, true 이면 실제 실행됨
 * gzip? - 기본(true), gzip 으로 압축할지 여부
@@ -28,24 +52,17 @@ MySQL 데이터 백업 및 복구를 위한 Ruby 스크립트 도구
 ## 백업 데이터 복구
 
 ```shell
-./restore.rb <profile> {backup id} {run?} {drop all tables?}
+./bin/restore <profile> {backup id} {run?} {drop all tables?}
 ```
 
 * drop all tables? - 기본(false), 기존 테이블을 유지하면 false, 아니면 true, true 로 하지 않으면 integration check 오류 날 수 있음
-
-## config 
-
-* config/ 디렉토리 안에 설정 파일들이 있다.
-* data-tables.rb - 큰 테이블 중 최신 row 만 백업하기 위해 --where 조건을 넣기 위한 컬럼을 설정할 수 있다.
-* ignore-tables.rb - 사용하지 않는 테이블로 백업에서 제외해야 할 테이블 설정 할 수 있다.
-* db-info-{profile}.rb - {profile} 별 db 접속 정보를 설정할 수 있다.
 
 ## 사용자와 데이터베이스 생성 sql 생성
 
 데이터베이스와 사용자를 생성하는 sql 문을 생성할 수 있다.
 
 ```shell
-./generate_create_db_user_sql.rb {user} {password} {db} {host}
+./bin/gen_create_db_user {user} {password} {db} {host}
 ```
 
 ## Installing Ruby
@@ -63,5 +80,4 @@ ruby -v
 ## TODO
 
 * [ ] db 설정 정보는 spring cloud config 에서 가져 오는 옵션 추가
-* [ ] 자동화된 unit test 작성 필요
 * [ ] 인수 입력시 linux 표준 명령행 인수 입력 형식 --backup-id=1 형태로 변경
