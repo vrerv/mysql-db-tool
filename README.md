@@ -7,15 +7,39 @@ A ruby script tool for backing up and restoring MySQL data.
 ## Requirements
 
 * Tested on linux, Mac OS X environments only
-* ruby, mysql, mysqldump, pv, gzip, zcat commands must be installed
+* ruby, mysql, mysqldump, gzip, zcat commands must be installed
+
+## Configuration
+
+Create a config-<env>.json file under the current directory according to the database environment.
+
+```json
+{
+  "dataTables": [],
+  "ignoreTables": [],
+  "dbInfo": {
+    "host": "localhost",
+    "port": 3306,
+    "user": "root",
+    "password": "",
+    "database": [
+      "test_db"
+    ]
+  }
+}
+```
+
+* dataTables - allows you to set a column for putting a --where condition to backup only the latest(3 days) rows of a large table.
+    * { "name": "table_name", "where": "column_name" }
+* ignoreTables - allows you to set which tables should be excluded from backups as unused tables.
 
 ## Data backup
 
 ```shell
-./backup.rb {profile} {backup id} {run?} {gzip?}
+./bin/backup {env} {backup id} {run?} {gzip?}
 ```
 
-* profile - default (dev), mapped to db-info-<profile> in config, has DB connection information
+* env - default (local), key to find the configuration file. e.g.) config-local.json
 * backup id - default (0), ID to use when restoring as a string
 * run? - Default (false), you can check in advance which command will be executed, if true, it will be executed
 * gzip? - default (true), whether to compress with gzip or not
@@ -28,7 +52,7 @@ After execution, a directory named "backup-{backup id}" will be created under th
 ## restore backup data
 
 ```shell
-./restore.rb <profile> {backup id} {run?} {drop all tables?}
+./bin/restore <env> {backup id} {run?} {drop all tables?}
 ```
 
 * drop all tables? - Default (false), to keep existing tables, or true, which may cause integration check error if not set to true
@@ -38,15 +62,8 @@ After execution, a directory named "backup-{backup id}" will be created under th
 You can generate a sql script to create a db and user.
 
 ```shell
-./generate_create_db_user_sql.rb {user} {password} {db} {host}
+./bin/gen_create_db_user {user} {password} {db} {host}
 ```
-
-## config
-
-* config/ directory contains the configuration files.
-* data-tables.rb - allows you to set a column for putting a --where condition to backup only the latest rows of a large table.
-* ignore-tables.rb - allows you to set which tables should be excluded from backups as unused tables.
-* db-info-{profile}.rb - configures db access information for each profile.
 
 ## Installing Ruby
 
@@ -63,5 +80,4 @@ ruby -v
 ## TODO
 
 * [ ] Add option to get db configuration information from spring cloud config
-* [ ] Need to write automated unit tests
 * [ ] Change linux standard command line argument input format to --backup-id=1 when inputting arguments

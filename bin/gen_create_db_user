@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+require "mysql_db_tool"
+
 user=ARGV.count > 0 ? ARGV[0] : "db_user"
 password=ARGV.count > 1 ? ARGV[1] : "db_user_password"
 db=ARGV.count > 2 ? ARGV[2] : "db_name"
@@ -12,4 +14,4 @@ replace_map = {
   "DB_HOST" => host
 }
 
-puts `cat ./create_db_user_template.sql | ruby -pe '$_=$_#{replace_map.map { |k,v| ".gsub(/#{k}/, \"#{v}\")" }.join("")}' `
+puts `cat #{MySQLDBTool.find_resource('sql/create_db_user_template.sql')} | ruby -pe '$_=$_#{replace_map.map { |k,v| ".gsub(/#{k}/, \"#{v}\")" }.join("")}' `

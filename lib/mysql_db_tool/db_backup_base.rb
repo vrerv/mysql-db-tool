@@ -4,7 +4,7 @@ def run(isRun, command)
   if not isRun
     puts "[dryRun] #{command}"
   else
-    puts command
+    puts "Running: [#{command}]"
     puts `#{command}`
   end
 end
@@ -13,12 +13,12 @@ def backupDirName(id, dbName = "")
   "backup-#{id}#{dbName.empty? ? '' : "/#{dbName}"}"
 end
 
-def mysqlDefaultOptions(database)
-  " --ssl-mode=disabled -h #{DB_INFO[:hostname]} -u #{DB_INFO[:user]} #{DB_INFO[:password].to_s.empty? ? '' : " -p'#{DB_INFO[:password]}'"} #{DB_INFO[:port].to_s.empty? ? '' : " -P'#{DB_INFO[:port]}'"} #{database} "
+def mysqlDefaultOptions(db_info, database)
+  " --ssl-mode=disabled -h #{db_info[:host]} -u #{db_info[:user]} #{db_info[:password].to_s.empty? ? '' : " -p'#{db_info[:password]}'"} #{db_info[:port].to_s.empty? ? '' : " -P'#{db_info[:port]}'"} #{database} "
 end
 
 def verify_tools_exist
-  tools = ["mysql", "mysqldump", "pv", "gzip", "zcat"]
+  tools = ["mysql", "mysqldump", "gzip", "zcat"]
   missing_tools = []
 
   tools.each do |tool|

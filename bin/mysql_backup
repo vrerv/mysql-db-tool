@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+
+require "bundler/setup"
+require "mysql_db_tool"
+
+# Parse command line arguments
+options = {}
+options[:env] = ARGV[0] || "local"
+options[:id] = ARGV[1] || "0"
+options[:run] = ARGV[2] == "true"
+options[:gzip] = ARGV.count > 3 ? ARGV[3] == "true" : true
+
+# Print the options for verification
+puts "options=#{options}"
+
+# Perform the backup
+# begin
+  MySQLDBTool.backup(options)
+# rescue => e
+#   puts "Error during backup: #{e.message}"
+#   exit 1
+# end
+
+puts "Backup completed successfully."
