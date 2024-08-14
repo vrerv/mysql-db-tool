@@ -77,6 +77,10 @@ gen_create_db_user {user} {password} {db} {host}
 
 ## Installing Ruby
 
+You can use OS default ruby if it is already installed.
+
+Below is additional steps to install or develop with the latest version of Ruby.
+
 Install using `rbenv` on Mac OS X
 
 ```bash
@@ -87,6 +91,3 @@ rbenv global 3.3.0
 ruby -v
 ```
 
-## TODO
-
-* [ ] Add option to get db configuration information from spring cloud config
