@@ -1,4 +1,10 @@
 
+If you use bundler >= 2.x, you can use Gemlock.file.
+to create symlink for bundler 2.x use following command to create symlink for Gemfile.lock
+
+```shell
+rake bundler:symlink_lockfile
+```
 
 run without install
 
