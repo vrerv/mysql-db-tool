@@ -42,7 +42,7 @@ module MySQLDBTool
 
         ignoreTablesOption = @ignore_tables.map { |e| "--ignore-table=#{@db_info[:database]}.#{e}"  }.join(' ')
 
-        commands.push gzipCommand("mysqldump --no-data #{ignoreTablesOption} #{defaultOptions}", isGzip, "#{backupFile}-schema.sql")
+        commands.push gzipCommand("mysqldump --no-data #{ignoreTablesOption} #{defaultOptions}", isGzip, "#{backupFile}-schema.sql#{isGzip ? '.gz' : ''}")
 
         backupTables = []
 
@@ -52,11 +52,11 @@ module MySQLDBTool
             backupTables.push(table[:name])
             next
           else
-            commands.push(gzipCommand("mysqldump --no-create-info #{options} #{where} #{defaultOptions} #{table[:name]}", isGzip, "#{backupFile}-#{table[:name]}.sql"))
+            commands.push(gzipCommand("mysqldump --no-create-info #{options} #{where} #{defaultOptions} #{table[:name]}", isGzip, "#{backupFile}-#{table[:name]}.sql#{isGzip ? '.gz' : ''}"))
           end
         }
 
-        commands.push(gzipCommand("mysqldump --no-create-info #{options} #{defaultOptions} #{backupTables.join(' ')}", isGzip, "#{backupFile}-all-other-tables.sql"))
+        commands.push(gzipCommand("mysqldump --no-create-info #{options} #{defaultOptions} #{backupTables.join(' ')}", isGzip, "#{backupFile}-all-other-tables.sql#{isGzip ? '.gz' : ''}"))
         commands
       end
     end
