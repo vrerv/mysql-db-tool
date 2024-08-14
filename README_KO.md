@@ -33,11 +33,19 @@ MySQL 데이터 백업 및 복구를 위한 Ruby 스크립트 도구
     * { "name": "table_name", "where": "column_name" }
 * ignoreTables - 제외할 테이블을 설정한다.
 
+## 설치
+
+```shell
+gem install mysql_db_tool
+```
+
 ## 데이터 백업
 
 ```shell
-./bin/backup -e {env} -i {backup id} -r {run?} --gzip
+mysql_backup -e {env} -i {backup id} -r {run?} --gzip
 ```
+
+`mysql_backup -h` 로 도움말을 표시할 수 있다.
 
 * env - 기본(dev), 설정 파일을 찾기위한 키, DB 접속 정보가 있음
 * backup id - 기본(0), 문자열로 복구할때 사용할 id
@@ -52,8 +60,10 @@ MySQL 데이터 백업 및 복구를 위한 Ruby 스크립트 도구
 ## 백업 데이터 복구
 
 ```shell
-./bin/restore -e {env} -i {backup id} -r {run?} --drop-all-tables
+mysql_restore -e {env} -i {backup id} -r {run?} --drop-all-tables
 ```
+
+`mysql_restore -h` 로 도움말을 표시할 수 있다.
 
 * drop all tables? - 기본(false), 기존 테이블을 유지하면 false, 아니면 true, true 로 하지 않으면 integration check 오류 날 수 있음
 
@@ -62,7 +72,7 @@ MySQL 데이터 백업 및 복구를 위한 Ruby 스크립트 도구
 데이터베이스와 사용자를 생성하는 sql 문을 생성할 수 있다.
 
 ```shell
-./bin/gen_create_db_user {user} {password} {db} {host}
+gen_create_db_user {user} {password} {db} {host}
 ```
 
 ## Installing Ruby

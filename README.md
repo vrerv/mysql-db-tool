@@ -33,11 +33,19 @@ Create a config-<env>.json file under the current directory according to the dat
     * { "name": "table_name", "where": "column_name" }
 * ignoreTables - allows you to set which tables should be excluded from backups as unused tables.
 
+## Install
+
+```shell
+gem install mysql_db_tool
+```
+
 ## Data backup
 
 ```shell
-./bin/backup -e {env} -i {backup id} -r {run?} --gzip
+mysql_backup -e {env} -i {backup id} -r {run?} --gzip
 ```
+
+you can get help by running `mysql_backup -h`
 
 * env - default (local), key to find the configuration file. e.g.) config-local.json
 * backup id - default (0), ID to use when restoring as a string
@@ -52,8 +60,10 @@ After execution, a directory named "backup-{backup id}" will be created under th
 ## restore backup data
 
 ```shell
-./bin/restore -e {env} -i {backup id} -r {run?} --drop-all-tables
+mysql_restore -e {env} -i {backup id} -r {run?} --drop-all-tables
 ```
+
+you can get help by running `mysql_restore -h`
 
 * drop all tables? - Default (false), to keep existing tables, or true, which may cause integration check error if not set to true
 
@@ -62,7 +72,7 @@ After execution, a directory named "backup-{backup id}" will be created under th
 You can generate a sql script to create a db and user.
 
 ```shell
-./bin/gen_create_db_user {user} {password} {db} {host}
+gen_create_db_user {user} {password} {db} {host}
 ```
 
 ## Installing Ruby
