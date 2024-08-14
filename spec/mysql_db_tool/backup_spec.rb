@@ -42,7 +42,6 @@ RSpec.describe MySQLDBTool::Backup do
       allow(DateTime).to receive(:now).and_return(fixed_time)
 
       commands = instance.perform
-      puts "commands=#{commands}"
       expect(commands).to eq ([
         "mkdir -p backup-42/0_test_db-abc",
         "mysqldump --no-data  --column-statistics=0  --ssl-mode=disabled -h my-host -u test-user   test_db-abc  | gzip  > backup-42/0_test_db-abc/2024-07-17_42-schema.sql.gz",

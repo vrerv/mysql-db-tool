@@ -46,9 +46,9 @@ module MySQLDBTool
 
       gsubstring = sameDb ? "" : databaseMap.map { |k,v| ".gsub(/#{k}/, \"#{v}\")" }.join("")
 
-      commands = []
-
       Dir.entries(backupDir).reject {|f| File.directory? f}.sort.flat_map do |f|
+
+        commands = []
 
         index, origin_database = split_integer_and_string(f)
         database = get_element_or_last(databases, index)
