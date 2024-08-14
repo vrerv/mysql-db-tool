@@ -36,7 +36,7 @@ MySQL 데이터 백업 및 복구를 위한 Ruby 스크립트 도구
 ## 데이터 백업
 
 ```shell
-./bin/backup {env} {backup id} {run?} {gzip?}
+./bin/backup -e {env} -i {backup id} -r {run?} --gzip
 ```
 
 * env - 기본(dev), 설정 파일을 찾기위한 키, DB 접속 정보가 있음
@@ -52,7 +52,7 @@ MySQL 데이터 백업 및 복구를 위한 Ruby 스크립트 도구
 ## 백업 데이터 복구
 
 ```shell
-./bin/restore <profile> {backup id} {run?} {drop all tables?}
+./bin/restore -e {env} -i {backup id} -r {run?} --drop-all-tables
 ```
 
 * drop all tables? - 기본(false), 기존 테이블을 유지하면 false, 아니면 true, true 로 하지 않으면 integration check 오류 날 수 있음
@@ -80,4 +80,3 @@ ruby -v
 ## TODO
 
 * [ ] db 설정 정보는 spring cloud config 에서 가져 오는 옵션 추가
-* [ ] 인수 입력시 linux 표준 명령행 인수 입력 형식 --backup-id=1 형태로 변경

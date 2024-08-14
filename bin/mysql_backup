@@ -2,23 +2,43 @@
 
 require "bundler/setup"
 require "mysql_db_tool"
+require "optparse"
+
+# Define the options
+options = {
+  env: "local",
+  id: "0",
+  run: false,
+  gzip: true
+}
 
 # Parse command line arguments
-options = {}
-options[:env] = ARGV[0] || "local"
-options[:id] = ARGV[1] || "0"
-options[:run] = ARGV[2] == "true"
-options[:gzip] = ARGV.count > 3 ? ARGV[3] == "true" : true
+OptionParser.new do |opts|
+  opts.banner = "Usage: mysql_backup [options]\n\n#{MySQLDBTool::ENV_VAR_DESCRIPTION}\n"
+
+  MySQLDBTool.env_opt(options, opts)
+  MySQLDBTool.id_opt(options, opts)
+  MySQLDBTool.run_opt(options, opts)
+
+  opts.on("-g", "--[no-]gzip", "Enable or disable gzip (default: enabled)") do |gzip|
+    options[:gzip] = gzip
+  end
+
+  opts.on("-h", "--help", "Show this help message") do
+    puts opts
+    exit
+  end
+end.parse!
 
 # Print the options for verification
 puts "options=#{options}"
 
 # Perform the backup
-# begin
+begin
   MySQLDBTool.backup(options)
-# rescue => e
-#   puts "Error during backup: #{e.message}"
-#   exit 1
-# end
+rescue => e
+  puts "Error during backup: #{e.message}"
+  exit 1
+end
 
 puts "Backup completed successfully."

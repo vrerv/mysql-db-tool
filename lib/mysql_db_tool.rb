@@ -7,17 +7,40 @@ require_relative 'mysql_db_tool/db_backup_base'
 module MySQLDBTool
   class Error < StandardError; end
 
+  # Environment variable description
+  ENV_VAR_DESCRIPTION = <<~DESC
+    Environment Variables:
+      DUMP_OPTIONS - Additional options to pass to the MySQL dump command during the backup process.
+                     This can include any options supported by mysqldump, such as --skip-lock-tables.
+  DESC
+
+  def self.env_opt(options, opts)
+    opts.on("-e", "--env ENVIRONMENT", "Environment (default: local) - key to find the configuration file. e.g.) config-local.json") do |env|
+      options[:env] = env
+    end
+  end
+
+  def self.id_opt(options, opts)
+    opts.on("-i", "--backup-id BACKUP_ID", "BACKUP_ID (default: 0)") do |id|
+      options[:id] = id
+    end
+  end
+
+  def self.run_opt(options, opts)
+    opts.on("-r", "--run", "Run the backup (default: false) or Just show the commands") do
+      options[:run] = true
+    end
+  end
+
   # You might want to add methods to easily access your main functionalities
   def self.backup(options = {})
-    isRun = options[:run]
     commands = Backup.new(options).perform
-    commands.each { |command| run(isRun, command) }
+    commands.each { |command| run(options[:run], command) }
   end
 
   def self.restore(options = {})
-    isRun = options[:run]
     commands = Restore.new(options).perform
-    commands.each { |command| run(isRun, command) }
+    commands.each { |command| run(options[:run], command) }
   end
 
   def self.find_resource(relative_path)

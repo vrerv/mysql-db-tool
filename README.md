@@ -36,7 +36,7 @@ Create a config-<env>.json file under the current directory according to the dat
 ## Data backup
 
 ```shell
-./bin/backup {env} {backup id} {run?} {gzip?}
+./bin/backup -e {env} -i {backup id} -r {run?} --gzip
 ```
 
 * env - default (local), key to find the configuration file. e.g.) config-local.json
@@ -52,7 +52,7 @@ After execution, a directory named "backup-{backup id}" will be created under th
 ## restore backup data
 
 ```shell
-./bin/restore <env> {backup id} {run?} {drop all tables?}
+./bin/restore -e {env} -i {backup id} -r {run?} --drop-all-tables
 ```
 
 * drop all tables? - Default (false), to keep existing tables, or true, which may cause integration check error if not set to true
@@ -80,4 +80,3 @@ ruby -v
 ## TODO
 
 * [ ] Add option to get db configuration information from spring cloud config
-* [ ] Change linux standard command line argument input format to --backup-id=1 when inputting arguments
