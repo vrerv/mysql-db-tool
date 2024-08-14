@@ -1,6 +1,7 @@
 backup-*
 .idea
 .DS_Store
+Gemfile.lock
 
 *.gem
 
