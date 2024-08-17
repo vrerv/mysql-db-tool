@@ -9,7 +9,8 @@ options = {
   env: "local",
   id: "0",
   run: false,
-  gzip: true
+  gzip: true,
+  gzip_suffix: ".gz"
 }
 
 # Parse command line arguments
@@ -22,6 +23,10 @@ OptionParser.new do |opts|
 
   opts.on("-g", "--[no-]gzip", "Enable or disable gzip (default: enabled)") do |gzip|
     options[:gzip] = gzip
+  end
+
+  opts.on("-s", "--gzip-suffix SUFFIX", "Set the gzip suffix (default: .gz), some platform requires '.Z'") do |gzip_suffix|
+    options[:gzip_suffix] = gzip_suffix
   end
 
   opts.on("-h", "--help", "Show this help message") do

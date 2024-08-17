@@ -50,4 +50,22 @@ RSpec.describe MySQLDBTool::Backup do
     end
   end
 
+  describe '#perform' do
+
+    let(:options) { { env: 'backup-test-env', id: '42', run: false, gzip: true, gzip_suffix: '.Z' } }
+    let(:instance) { described_class.new(options) }
+
+    it 'backs up with gzip and set gzip suffix' do
+      fixed_time = DateTime.new(2024, 7, 17, 12, 0, 0)
+      allow(DateTime).to receive(:now).and_return(fixed_time)
+
+      commands = instance.perform
+      expect(commands).to eq ([
+        "mkdir -p backup-42/0_test_db-abc",
+        "mysqldump --no-data  --column-statistics=0  --ssl-mode=disabled -h my-host -u test-user   test_db-abc  | gzip  > backup-42/0_test_db-abc/2024-07-17_42-schema.sql.Z",
+        "mysqldump --no-create-info --single-transaction --skip-lock-tables --column-statistics=0  --ssl-mode=disabled -h my-host -u test-user   test_db-abc   | gzip  > backup-42/0_test_db-abc/2024-07-17_42-all-other-tables.sql.Z"
+      ])
+    end
+  end
+
 end

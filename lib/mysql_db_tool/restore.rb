@@ -74,10 +74,10 @@ module MySQLDBTool
     def restore_each(commands, file, defaultOptions, gsubstring)
       command = ""
       replacing = " | ruby -pe '$_=$_#{gsubstring}'" unless gsubstring.empty?
-      if file.end_with? ".sql.gz"
-        command = "zcat #{file} #{replacing} | mysql #{defaultOptions}"
-      elsif file.end_with? ".sql"
+      if file.end_with? ".sql"
         command = "cat #{file} #{replacing} | mysql #{defaultOptions}"
+      elsif gzip_file?(file)
+        command = "zcat #{file} #{replacing} | mysql #{defaultOptions}"
       else
         puts "not supported file #{file}"
       end
@@ -94,6 +94,14 @@ module MySQLDBTool
 
     def get_element_or_last(array, index)
       index < array.length ? array[index] : array.last
+    end
+
+    def gzip_file?(file_path)
+      magic_number = "\x1F\x8B".force_encoding('ASCII-8BIT')
+
+      File.open(file_path, "rb") do |file|
+        file.read(2) == magic_number
+      end
     end
 
   end

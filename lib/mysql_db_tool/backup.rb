@@ -21,6 +21,7 @@ module MySQLDBTool
       id=@options[:id] || "0"
       isGzip=@options[:gzip]
       limitDays=@options[:limit_days] || 3
+      gzipSuffix = @options[:gzip_suffix] || '.gz'
 
       Array(@db_info[:database]).flat_map.each_with_index do |database, index |
 
@@ -42,7 +43,7 @@ module MySQLDBTool
 
         ignoreTablesOption = @ignore_tables.map { |e| "--ignore-table=#{@db_info[:database]}.#{e}"  }.join(' ')
 
-        commands.push gzipCommand("mysqldump --no-data #{ignoreTablesOption} #{defaultOptions}", isGzip, "#{backupFile}-schema.sql")
+        commands.push gzipCommand("mysqldump --no-data #{ignoreTablesOption} #{defaultOptions}", isGzip, "#{backupFile}-schema.sql", gzipSuffix)
 
         backupTables = []
 
@@ -52,17 +53,17 @@ module MySQLDBTool
             backupTables.push(table[:name])
             next
           else
-            commands.push(gzipCommand("mysqldump --no-create-info #{options} #{where} #{defaultOptions} #{table[:name]}", isGzip, "#{backupFile}-#{table[:name]}.sql"))
+            commands.push(gzipCommand("mysqldump --no-create-info #{options} #{where} #{defaultOptions} #{table[:name]}", isGzip, "#{backupFile}-#{table[:name]}.sql", gzipSuffix))
           end
         }
 
-        commands.push(gzipCommand("mysqldump --no-create-info #{options} #{defaultOptions} #{backupTables.join(' ')}", isGzip, "#{backupFile}-all-other-tables.sql"))
+        commands.push(gzipCommand("mysqldump --no-create-info #{options} #{defaultOptions} #{backupTables.join(' ')}", isGzip, "#{backupFile}-all-other-tables.sql", gzipSuffix))
         commands
       end
     end
 
-    def gzipCommand(command, isGzip, file)
-      "#{command} #{isGzip ? '| gzip ' : ''} > #{file}#{isGzip ? '.gz' : ''}"
+    def gzipCommand(command, isGzip, file, gzipSuffix = '.gz')
+      "#{command} #{isGzip ? '| gzip ' : ''} > #{file}#{isGzip ? gzipSuffix : ''}"
     end
 
   end
