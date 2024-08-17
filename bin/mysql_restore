@@ -20,7 +20,7 @@ OptionParser.new do |opts|
   MySQLDBTool.id_opt(options, opts)
   MySQLDBTool.run_opt(options, opts)
 
-  opts.on("-d", "--[no-]drop-all-tables", "Drop all tables before restoring (default: disabled)") do |drop_all_tables|
+  opts.on("-D", "--[no-]drop-all-tables", "Drop all tables before restoring (default: disabled)") do |drop_all_tables|
     options[:drop_all_tables] = drop_all_tables
   end
 
