@@ -20,6 +20,7 @@ OptionParser.new do |opts|
   MySQLDBTool.env_opt(options, opts)
   MySQLDBTool.id_opt(options, opts)
   MySQLDBTool.run_opt(options, opts)
+  MySQLDBTool.database_opt(options, opts)
 
   opts.on("-g", "--[no-]gzip", "Enable or disable gzip (default: enabled)") do |gzip|
     options[:gzip] = gzip

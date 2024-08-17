@@ -87,4 +87,20 @@ RSpec.describe MySQLDBTool::Backup do
     end
   end
 
+  describe '#perform' do
+
+    let(:options) { { env: 'backup-test-env', id: '42', run: false, gzip: false, database: 'test_db2' } }
+    let(:instance) { described_class.new(options) }
+
+    it 'backs up with database option' do
+
+      commands = instance.perform
+      expect(commands).to eq ([
+        "mkdir -p backup-42/0_test_db2",
+        "mysqldump --no-data  --column-statistics=0  --ssl-mode=disabled -h my-host -u test-user   test_db2   > backup-42/0_test_db2/2024-07-17_42-schema.sql",
+        "mysqldump --no-create-info  --single-transaction --skip-lock-tables --column-statistics=0  --ssl-mode=disabled -h my-host -u test-user   test_db2    > backup-42/0_test_db2/2024-07-17_42-all-other-tables.sql"
+      ])
+    end
+  end
+
 end

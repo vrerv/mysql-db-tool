@@ -12,6 +12,8 @@ module MySQLDBTool
       @data_tables = tableConfig[:data_tables]
       @ignore_tables = tableConfig[:ignore_tables]
       @db_info = tableConfig[:db_info]
+      
+      @db_info[:database] = @options[:database] if @options[:database]
     end
 
     def perform

@@ -32,6 +32,12 @@ module MySQLDBTool
     end
   end
 
+  def self.database_opt(options, opts)
+    opts.on("-d", "--database DATABASE", "Override option for dbInfo.database configuration") do |database|
+      options[:database] = database.split(',')
+    end
+  end
+
   # You might want to add methods to easily access your main functionalities
   def self.backup(options = {})
     commands = Backup.new(options).perform
