@@ -6,10 +6,10 @@ module MySQLDBTool
 
     def initialize(options = {})
       @options = options
-      tableConfig = MySQLDBTool::Config::ConfigLoader.load(options[:env])
-      @data_tables = tableConfig[:data_tables]
-      @ignore_tables = tableConfig[:ignore_tables]
-      @db_info = tableConfig[:db_info]
+      config = MySQLDBTool::Config::ConfigLoader.load(options[:env])
+      @data_tables = config[:data_tables]
+      @ignore_tables = config[:ignore_tables]
+      @db_info = config[:db_info]
 
       @db_info[:database] = @options[:database] if @options[:database]
     end
@@ -25,47 +25,44 @@ module MySQLDBTool
       end
 
       id=@options[:id] || "0"
-      isRun=@options[:run]
-      isDropAllTables=@options[:drop_all_tables]
+      is_drop_all_tables=@options[:drop_all_tables]
 
-      puts "ARGV=#{ARGV}, env=#{env}, id=#{id}, run=#{isRun} isDropAllTables=#{isDropAllTables}"
+      backup_dir=backup_dir_name(id)
 
-      backupDir=backupDirName(id)
-
-      puts "backupDir=#{backupDir}"
+      puts "backupDir=#{backup_dir}"
       databases = Array(@db_info[:database])
 
-      databaseMap = {}
-      sameDb = true
+      database_map = {}
+      same_db = true
 
-      Dir.entries(backupDir).reject {|f| File.directory? f}.sort.each do |f|
+      Dir.entries(backup_dir).reject {|f| File.directory? f}.sort.each do |f|
 
         index, origin_database = split_integer_and_string(f)
         database = get_element_or_last(databases, index)
-        sameDb = sameDb && (database == origin_database)
-        databaseMap["`#{origin_database}`\\."] = "`#{database}`."
+        same_db = same_db && (database == origin_database)
+        database_map["`#{origin_database}`\\."] = "`#{database}`."
       end
 
-      gsubstring = sameDb ? "" : databaseMap.map { |k,v| ".gsub(/#{k}/, \"#{v}\")" }.join("")
+      replace_db_names_command = same_db ? "" : database_map.map { |k,v| ".gsub(/#{k}/, \"#{v}\")" }.join("")
 
-      Dir.entries(backupDir).reject {|f| File.directory? f}.sort.flat_map do |f|
+      Dir.entries(backup_dir).reject {|f| File.directory? f}.sort.flat_map do |f|
 
         commands = []
 
         index, origin_database = split_integer_and_string(f)
         database = get_element_or_last(databases, index)
 
-        defaultOptions=mysqlDefaultOptions(@db_info, database)
-        backupDir=backupDirName(id, f)
+        default_options=mysql_default_options(@db_info, database)
+        backup_dir=backup_dir_name(id, f)
 
-        commands.push("cat #{MySQLDBTool.find_resource('sql/drop_all_tables.sql')} | mysql #{defaultOptions}") if isDropAllTables
-        commands.push("cat #{MySQLDBTool.find_resource('sql/drop_all_views.sql')} | mysql #{defaultOptions}") if isDropAllTables
+        commands.push("cat #{MySQLDBTool.find_resource('sql/drop_all_tables.sql')} | mysql #{default_options}") if is_drop_all_tables
+        commands.push("cat #{MySQLDBTool.find_resource('sql/drop_all_views.sql')} | mysql #{default_options}") if is_drop_all_tables
 
-        Dir.entries(backupDir).reject {|f| File.directory? f} .select {|f| f.include?("-schema.sql")} .each {|f|
-          restore_each(commands, backupDir+"/"+f, defaultOptions, gsubstring)
+        Dir.entries(backup_dir).reject {|f| File.directory? f}.select {|f| f.include?("-schema.sql")}.each {|f|
+          restore_each(commands, backup_dir+"/"+f, default_options, replace_db_names_command)
         }
-        Dir.entries(backupDir).reject {|f| File.directory? f} .reject {|f| f.include?("-schema.sql")} .each {|f|
-          restore_each(commands, backupDir+"/"+f, defaultOptions, gsubstring)
+        Dir.entries(backup_dir).reject {|f| File.directory? f}.reject {|f| f.include?("-schema.sql")}.each {|f|
+          restore_each(commands, backup_dir+"/"+f, default_options, replace_db_names_command)
         }
         commands
       end
@@ -73,18 +70,18 @@ module MySQLDBTool
 
     private
 
-    def restore_each(commands, file, defaultOptions, gsubstring)
+    def restore_each(commands, file, default_options, replace_db_names_command)
       command = ""
-      replacing = " | ruby -pe '$_=$_#{gsubstring}'" unless gsubstring.empty?
+      replacing = " | ruby -pe '$_=$_#{replace_db_names_command}'" unless replace_db_names_command.empty?
       if file.end_with? ".sql"
-        command = "cat #{file} #{replacing} | mysql #{defaultOptions}"
+        command = "cat #{file} #{replacing} | mysql #{default_options}"
       elsif gzip_file?(file)
-        command = "zcat #{file} #{replacing} | mysql #{defaultOptions}"
+        command = "zcat #{file} #{replacing} | mysql #{default_options}"
       else
         puts "not supported file #{file}"
       end
 
-      commands.push(command) if not command.empty?
+      commands.push(command) unless command.empty?
     end
 
     def split_integer_and_string(input)

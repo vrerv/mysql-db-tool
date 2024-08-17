@@ -15,7 +15,7 @@ RSpec.describe MySQLDBTool::Restore do
     let(:instance) { described_class.new(options) }
 
     it 'restores one db' do
-      allow(MySQLDBTool::Config::ConfigLoader).to receive(:load).and_return ({
+      allow(MySQLDBTool::Config::ConfigLoader).to receive(:load).and_return({
         db_info: { user: 'test-user', password: '', host: 'my-host', database: ['test_db-abc'] },
         data_tables: [],
         ignore_tables: []
@@ -24,12 +24,12 @@ RSpec.describe MySQLDBTool::Restore do
       allow(Dir).to receive(:entries).with('backup-0/0-my-db').and_return(['.', '..', 'a.sql'])
 
       commands = instance.perform
-      expect(commands).to eq ([
+      expect(commands).to eq([
         "cat backup-0/0-my-db/a.sql  | ruby -pe '$_=$_.gsub(/``\\./, \"`test_db-abc`.\")' | mysql  --ssl-mode=disabled -h my-host -u test-user   test_db-abc "
       ])
     end
     it 'restores each database' do
-      allow(MySQLDBTool::Config::ConfigLoader).to receive(:load).and_return ({
+      allow(MySQLDBTool::Config::ConfigLoader).to receive(:load).and_return({
         db_info: { user: 'test-user', password: '', host: 'my-host', database: ['db-1', 'db-2'] },
         data_tables: [],
         ignore_tables: []
@@ -39,8 +39,7 @@ RSpec.describe MySQLDBTool::Restore do
       allow(Dir).to receive(:entries).with('backup-0/1_db-2').and_return(['.', '..', 'b.sql'])
 
       commands = instance.perform
-      puts "commands=#{commands}"
-      expect(commands).to eq ([
+      expect(commands).to eq([
         "cat backup-0/0_db-1/a.sql  | mysql  --ssl-mode=disabled -h my-host -u test-user   db-1 ",
         "cat backup-0/1_db-2/b.sql  | mysql  --ssl-mode=disabled -h my-host -u test-user   db-2 "
       ])
@@ -53,7 +52,7 @@ RSpec.describe MySQLDBTool::Restore do
 
     it 'restores' do
 
-      allow(MySQLDBTool::Config::ConfigLoader).to receive(:load).and_return ({
+      allow(MySQLDBTool::Config::ConfigLoader).to receive(:load).and_return({
         db_info: { user: 'test-user', password: '', host: 'my-host', database: ['db-1', 'db-2'] },
         data_tables: [],
         ignore_tables: []
@@ -63,8 +62,7 @@ RSpec.describe MySQLDBTool::Restore do
       allow(Dir).to receive(:entries).with('backup-0/1_db-2').and_return(['.', '..', 'b.sql'])
 
       commands = instance.perform
-      puts "commands=#{commands}"
-      expect(commands).to eq ([
+      expect(commands).to eq([
         "cat backup-0/0_db-1/a.sql  | ruby -pe '$_=$_.gsub(/`db-1`\\./, \"`rdb-1`.\").gsub(/`db-2`\\./, \"`rdb-2`.\")' | mysql  --ssl-mode=disabled -h my-host -u test-user   rdb-1 ",
         "cat backup-0/1_db-2/b.sql  | ruby -pe '$_=$_.gsub(/`db-1`\\./, \"`rdb-1`.\").gsub(/`db-2`\\./, \"`rdb-2`.\")' | mysql  --ssl-mode=disabled -h my-host -u test-user   rdb-2 "
       ])

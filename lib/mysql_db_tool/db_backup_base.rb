@@ -1,7 +1,7 @@
 
 
-def run(isRun, command)
-  if not isRun
+def run(is_run, command)
+  if not is_run
     puts "[dryRun] #{command}"
   else
     puts "Running: [#{command}]"
@@ -9,11 +9,11 @@ def run(isRun, command)
   end
 end
 
-def backupDirName(id, dbName = "")
-  "backup-#{id}#{dbName.empty? ? '' : "/#{dbName}"}"
+def backup_dir_name(id, db_name = "")
+  "backup-#{id}#{db_name.empty? ? '' : "/#{db_name}"}"
 end
 
-def mysqlDefaultOptions(db_info, database)
+def mysql_default_options(db_info, database)
   " --ssl-mode=disabled -h #{db_info[:host]} -u #{db_info[:user]} #{db_info[:password].to_s.empty? ? '' : " -p'#{db_info[:password]}'"} #{db_info[:port].to_s.empty? ? '' : " -P'#{db_info[:port]}'"} #{database} "
 end
 
@@ -22,7 +22,7 @@ def verify_tools_exist
   missing_tools = []
 
   tools.each do |tool|
-    if not system("which #{tool} > /dev/null 2>&1")
+    unless system("which #{tool} > /dev/null 2>&1")
       missing_tools << tool
       puts "'#{tool}' is not available"
     end

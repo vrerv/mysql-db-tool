@@ -8,11 +8,11 @@ module MySQLDBTool
 
     def initialize(options = {})
       @options = options
-      tableConfig = MySQLDBTool::Config::ConfigLoader.load(options[:env])
-      @data_tables = tableConfig[:data_tables]
-      @ignore_tables = tableConfig[:ignore_tables]
-      @db_info = tableConfig[:db_info]
-      
+      config = MySQLDBTool::Config::ConfigLoader.load(options[:env])
+      @data_tables = config[:data_tables]
+      @ignore_tables = config[:ignore_tables]
+      @db_info = config[:db_info]
+
       @db_info[:database] = @options[:database] if @options[:database]
     end
 
@@ -21,51 +21,51 @@ module MySQLDBTool
       verify_tools_exist
 
       id=@options[:id] || "0"
-      isGzip=@options[:gzip]
-      limitDays=@options[:limit_days] || 3
-      gzipSuffix = @options[:gzip_suffix] || '.gz'
+      use_gzip=@options[:gzip]
+      limit_days=@options[:limit_days] || 3
+      gzip_suffix = @options[:gzip_suffix] || '.gz'
 
       Array(@db_info[:database]).flat_map.each_with_index do |database, index |
 
-        defaultOptions="--column-statistics=0 #{mysqlDefaultOptions(@db_info, database)}"
-        backupDir=backupDirName(id, "#{index}_#{database}")
+        default_options="--column-statistics=0 #{mysql_default_options(@db_info, database)}"
+        backup_dir=backup_dir_name(id, "#{index}_#{database}")
 
         commands = []
-        if File.exist? backupDir
-          puts "[skip - directory exists] #{backupDir}"
+        if File.exist? backup_dir
+          puts "[skip - directory exists] #{backup_dir}"
           return commands
         end
-        commands.push "mkdir -p #{backupDir}"
+        commands.push "mkdir -p #{backup_dir}"
 
-        backupFile="#{backupDir}/#{DateTime.now.strftime("%Y-%m-%d")}_#{id}"
-        whereDate=(Date.today - limitDays).strftime("%Y-%m-%d 00:00:00")
+        backup_file="#{backup_dir}/#{DateTime.now.strftime("%Y-%m-%d")}_#{id}"
+        where_date=(Date.today - limit_days).strftime("%Y-%m-%d 00:00:00")
         options=ENV['DUMP_OPTIONS'] || "--single-transaction --skip-lock-tables"
 
-        puts "backupFile=#{backupFile}"
+        puts "backupFile=#{backup_file}"
 
-        ignoreTablesOption = @ignore_tables.map { |e| "--ignore-table=#{e.include?('.') ? e : "#{database}.#{e}"}" }.join(' ')
+        ignore_tables_option = @ignore_tables.map { |e| "--ignore-table=#{e.include?('.') ? e : "#{database}.#{e}"}" }.join(' ')
 
-        commands.push gzipCommand("mysqldump --no-data #{ignoreTablesOption} #{defaultOptions}", isGzip, "#{backupFile}-schema.sql", gzipSuffix)
+        commands.push gzip_command("mysqldump --no-data #{ignore_tables_option} #{default_options}", use_gzip, "#{backup_file}-schema.sql", gzip_suffix)
 
-        backupTables = []
+        backup_tables = []
 
         @data_tables.each {|table|
-          where = table[:where].empty? ? "" : "--where=\"#{table[:where]} >= '#{whereDate}'\""
+          where = table[:where].empty? ? "" : "--where=\"#{table[:where]} >= '#{where_date}'\""
           if where.empty?
-            backupTables.push(table[:name])
+            backup_tables.push(table[:name])
             next
           else
-            commands.push(gzipCommand("mysqldump --no-create-info #{options} #{where} #{defaultOptions} #{table[:name]}", isGzip, "#{backupFile}-#{table[:name]}.sql", gzipSuffix))
+            commands.push(gzip_command("mysqldump --no-create-info #{options} #{where} #{default_options} #{table[:name]}", use_gzip, "#{backup_file}-#{table[:name]}.sql", gzip_suffix))
           end
         }
 
-        commands.push(gzipCommand("mysqldump --no-create-info #{ignoreTablesOption} #{options} #{defaultOptions} #{backupTables.join(' ')}", isGzip, "#{backupFile}-all-other-tables.sql", gzipSuffix))
+        commands.push(gzip_command("mysqldump --no-create-info #{ignore_tables_option} #{options} #{default_options} #{backup_tables.join(' ')}", use_gzip, "#{backup_file}-all-other-tables.sql", gzip_suffix))
         commands
       end
     end
 
-    def gzipCommand(command, isGzip, file, gzipSuffix = '.gz')
-      "#{command} #{isGzip ? '| gzip ' : ''} > #{file}#{isGzip ? gzipSuffix : ''}"
+    def gzip_command(command, use_gzip, file, gzip_suffix = '.gz')
+      "#{command} #{use_gzip ? '| gzip ' : ''} > #{file}#{use_gzip ? gzip_suffix : ''}"
     end
 
   end
