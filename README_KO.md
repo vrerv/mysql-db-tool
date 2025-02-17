@@ -53,7 +53,7 @@ mysql_backup -e {env} -i {backup id} -r {run?} --gzip
 * gzip? - 기본(true), gzip 으로 압축할지 여부
 
 * DUMP_OPTIONS - 환경 변수로 공통 mysqldump 명령 옵션을 설정할 수 있음,
-  해당 환경 변수가 없다면, 기본 공통 옵션이 사용됨 (--single-transaction --skip-lock-tables)
+  해당 환경 변수가 없다면, 기본 공통 옵션이 사용됨 (--single-transaction --skip-lock-tables --no-tablespaces)
 
 실행 완료후 현재 디렉토리 안에 backup-{backup id} 로 디렉토리가 생성된다.
 
