@@ -53,7 +53,7 @@ you can get help by running `mysql_backup -h`
 * gzip? - default (true), whether to compress with gzip or not
 
 * DUMP_OPTIONS - you can set common mysqldump command options by this Environment variable,
-  if not set, it will use default options for mysqldump. (--single-transaction --skip-lock-tables)
+  if not set, it will use default options for mysqldump. (--single-transaction --skip-lock-tables --no-tablespaces)
 
 After execution, a directory named "backup-{backup id}" will be created under the current directory.
 

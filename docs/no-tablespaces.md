@@ -1,0 +1,5 @@
+The --no-tablespaces option tells mysqldump not to include any statements related to tablespaces—specifically, it omits the CREATE LOGFILE GROUP and CREATE TABLESPACE statements from the dump output. These statements are generally only relevant for setups that use custom tablespaces (such as certain NDB or InnoDB configurations).
+
+Starting with MySQL 5.7.31 (and affecting later versions such as 8.0.21+), mysqldump began requiring the PROCESS privilege in order to dump tablespaces. For many users (especially those on shared hosting), granting global PROCESS privileges isn’t an option. By using the --no-tablespaces flag, you can bypass this requirement because the dump will simply not include the tablespace creation statements.
+
+In most cases this omission is perfectly acceptable because many installations don’t make use of custom tablespaces. If you’re not actively using tablespaces, adding --no-tablespaces lets you create a dump without needing extra privileges.

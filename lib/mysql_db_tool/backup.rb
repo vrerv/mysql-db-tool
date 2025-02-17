@@ -39,7 +39,7 @@ module MySQLDBTool
 
         backup_file="#{backup_dir}/#{DateTime.now.strftime("%Y-%m-%d")}_#{id}"
         where_date=(Date.today - limit_days).strftime("%Y-%m-%d 00:00:00")
-        options=ENV['DUMP_OPTIONS'] || "--single-transaction --skip-lock-tables"
+        options=ENV['DUMP_OPTIONS'] || "--single-transaction --skip-lock-tables --no-tablespaces"
 
         puts "backupFile=#{backup_file}"
 
