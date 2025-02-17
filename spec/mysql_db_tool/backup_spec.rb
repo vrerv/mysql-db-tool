@@ -27,7 +27,7 @@ RSpec.describe MySQLDBTool::Backup do
       commands = instance.perform
       expect(commands).to eq([
         "mkdir -p backup-42/0_test_db-abc",
-        "mysqldump --no-data  --column-statistics=0  --ssl-mode=disabled -h my-host -u test-user   test_db-abc   > backup-42/0_test_db-abc/2024-07-17_42-schema.sql",
+        "mysqldump --no-data  --single-transaction --skip-lock-tables --column-statistics=0  --ssl-mode=disabled -h my-host -u test-user   test_db-abc   > backup-42/0_test_db-abc/2024-07-17_42-schema.sql",
         "mysqldump --no-create-info  --single-transaction --skip-lock-tables --column-statistics=0  --ssl-mode=disabled -h my-host -u test-user   test_db-abc    > backup-42/0_test_db-abc/2024-07-17_42-all-other-tables.sql"
       ])
     end
@@ -43,7 +43,7 @@ RSpec.describe MySQLDBTool::Backup do
       commands = instance.perform
       expect(commands).to eq([
         "mkdir -p backup-42/0_test_db-abc",
-        "mysqldump --no-data  --column-statistics=0  --ssl-mode=disabled -h my-host -u test-user   test_db-abc  | gzip  > backup-42/0_test_db-abc/2024-07-17_42-schema.sql.gz",
+        "mysqldump --no-data  --single-transaction --skip-lock-tables --column-statistics=0  --ssl-mode=disabled -h my-host -u test-user   test_db-abc  | gzip  > backup-42/0_test_db-abc/2024-07-17_42-schema.sql.gz",
         "mysqldump --no-create-info  --single-transaction --skip-lock-tables --column-statistics=0  --ssl-mode=disabled -h my-host -u test-user   test_db-abc   | gzip  > backup-42/0_test_db-abc/2024-07-17_42-all-other-tables.sql.gz"
       ])
     end
@@ -59,7 +59,7 @@ RSpec.describe MySQLDBTool::Backup do
       commands = instance.perform
       expect(commands).to eq([
         "mkdir -p backup-42/0_test_db-abc",
-        "mysqldump --no-data  --column-statistics=0  --ssl-mode=disabled -h my-host -u test-user   test_db-abc  | gzip  > backup-42/0_test_db-abc/2024-07-17_42-schema.sql.Z",
+        "mysqldump --no-data  --single-transaction --skip-lock-tables --column-statistics=0  --ssl-mode=disabled -h my-host -u test-user   test_db-abc  | gzip  > backup-42/0_test_db-abc/2024-07-17_42-schema.sql.Z",
         "mysqldump --no-create-info  --single-transaction --skip-lock-tables --column-statistics=0  --ssl-mode=disabled -h my-host -u test-user   test_db-abc   | gzip  > backup-42/0_test_db-abc/2024-07-17_42-all-other-tables.sql.Z"
       ])
     end
@@ -81,7 +81,7 @@ RSpec.describe MySQLDBTool::Backup do
       commands = instance.perform
       expect(commands).to eq([
         "mkdir -p backup-42/0_test_db-abc",
-        "mysqldump --no-data --ignore-table=test_db-abc.ignore_table1 --ignore-table=test_db-abc.ignore_table2 --column-statistics=0  --ssl-mode=disabled -h my-host -u test-user   test_db-abc   > backup-42/0_test_db-abc/2024-07-17_42-schema.sql",
+        "mysqldump --no-data --ignore-table=test_db-abc.ignore_table1 --ignore-table=test_db-abc.ignore_table2 --single-transaction --skip-lock-tables --column-statistics=0  --ssl-mode=disabled -h my-host -u test-user   test_db-abc   > backup-42/0_test_db-abc/2024-07-17_42-schema.sql",
         "mysqldump --no-create-info --ignore-table=test_db-abc.ignore_table1 --ignore-table=test_db-abc.ignore_table2 --single-transaction --skip-lock-tables --column-statistics=0  --ssl-mode=disabled -h my-host -u test-user   test_db-abc    > backup-42/0_test_db-abc/2024-07-17_42-all-other-tables.sql"
       ])
     end
@@ -97,7 +97,7 @@ RSpec.describe MySQLDBTool::Backup do
       commands = instance.perform
       expect(commands).to eq([
         "mkdir -p backup-42/0_test_db2",
-        "mysqldump --no-data  --column-statistics=0  --ssl-mode=disabled -h my-host -u test-user   test_db2   > backup-42/0_test_db2/2024-07-17_42-schema.sql",
+        "mysqldump --no-data  --single-transaction --skip-lock-tables --column-statistics=0  --ssl-mode=disabled -h my-host -u test-user   test_db2   > backup-42/0_test_db2/2024-07-17_42-schema.sql",
         "mysqldump --no-create-info  --single-transaction --skip-lock-tables --column-statistics=0  --ssl-mode=disabled -h my-host -u test-user   test_db2    > backup-42/0_test_db2/2024-07-17_42-all-other-tables.sql"
       ])
     end

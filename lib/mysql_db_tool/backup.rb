@@ -45,7 +45,7 @@ module MySQLDBTool
 
         ignore_tables_option = @ignore_tables.map { |e| "--ignore-table=#{e.include?('.') ? e : "#{database}.#{e}"}" }.join(' ')
 
-        commands.push gzip_command("mysqldump --no-data #{ignore_tables_option} #{default_options}", use_gzip, "#{backup_file}-schema.sql", gzip_suffix)
+        commands.push gzip_command("mysqldump --no-data #{ignore_tables_option} #{options} #{default_options}", use_gzip, "#{backup_file}-schema.sql", gzip_suffix)
 
         backup_tables = []
 
