@@ -39,6 +39,8 @@ Create a config-<env>.json file under the current directory according to the dat
 gem install mysql_db_tool
 ```
 
+[Example script](docs/examples.md)
+
 ## Data backup
 
 ```shell
