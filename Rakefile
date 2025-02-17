@@ -7,7 +7,7 @@ task :default => :spec
 task :test => :spec
 
 Rake::Task.tasks.each do |task|
-  task.enhance(['bundler:symlink_lockfile'])
+  # task.enhance(['bundler:symlink_lockfile'])
 end
 
 namespace :bundler do
