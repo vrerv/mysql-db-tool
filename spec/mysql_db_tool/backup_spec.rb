@@ -103,4 +103,26 @@ RSpec.describe MySQLDBTool::Backup do
     end
   end
 
+  describe '#perform' do
+    let(:options) { { env: 'backup-test-env', id: '42', run: false, gzip: false } }
+    let(:instance) { described_class.new(options) }
+
+    it 'backs up each database (default --ssl-mode=disabled)' do
+      ENV['DUMP_OPTIONS'] = nil
+      commands = instance.perform
+      expect(commands[1]).to include('--ssl-mode=disabled')
+      expect(commands[2]).to include('--ssl-mode=disabled')
+    end
+
+    it 'removes default --ssl-mode=disabled if DUMP_OPTIONS has --ssl-mode' do
+      ENV['DUMP_OPTIONS'] = '--ssl-mode=REQUIRED'
+      commands = instance.perform
+      expect(commands[1]).not_to include('--ssl-mode=disabled')
+      expect(commands[2]).not_to include('--ssl-mode=disabled')
+      expect(commands[1]).to include('--ssl-mode=REQUIRED')
+      expect(commands[2]).to include('--ssl-mode=REQUIRED')
+      ENV['DUMP_OPTIONS'] = nil
+    end
+  end
+
 end
